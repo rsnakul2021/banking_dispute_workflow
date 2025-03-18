@@ -54,4 +54,4 @@ AI service integration - I would also integrate the interface with a trusted LLM
 
 Both the low-code and AI-integration would require little to almost no-code since it is essentially prompt engineering with API calls. However, it would incur additional cost to the company.
 
-1.3 b) 
+1.3 b) With increased cases of bank frauds globally, the prototype can use AI-Assistance for providing users urgent-care based on the disput level. Assistance for next-steps for the users based on complicance and law. Assitance for a chatbot to interact with disputed users. AI can also optimize the code can incorporate other data sources to improve classification. Provide resouces to users to help curb bank traffic.
