@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banking Dispute Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Submit Transaction Dispute</h2>
+            <form id="disputeForm">
+                <div class="form-group">
+                    <label for="customer_id">Customer ID</label>
+                    <input type="text" id="customer_id" required placeholder="Enter customer ID">
+                </div>
+
+                <div class="form-group">
+                    <label for="datetime">Date & Time of Transaction</label>
+                    <input type="datetime-local" id="datetime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Transaction Amount</label>
+                    <input type="text" id="amount" required placeholder="Enter amount (e.g., 100.00)">
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Dispute Reason</label>
+                    <textarea id="reason" required placeholder="Please describe the reason for your dispute..."></textarea>
+                </div>
+
+                <button type="submit">Submit Dispute</button>
+            </form>
+
+            <div id="result" class="result hidden">
+                <h3>Dispute Classification Result</h3>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('disputeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                customer_id: document.getElementById('customer_id').value,
+                datetime: document.getElementById('datetime').value,
+                reason: document.getElementById('reason').value,
+                amount: document.getElementById('amount').value,
+                transaction_id: 'TX-' + Date.now() // Generate transaction ID
+            };
+
+            try {
+                const response = await fetch('/api/dispute', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.classList.remove('hidden');
+                    
+                    document.getElementById('resultContent').innerHTML = `
+                        <p><span class="label">Category:</span> <span>${result.category}</span></p>
+                        <p><span class="label">Priority:</span> <span class="priority-${result.priority.toLowerCase()}">${result.priority}</span></p>
+                        <p><span class="label">Recommended Action:</span> <span>${result.recommended_action}</span></p>
+                        <p><span class="label">Assigned Team:</span> <span>${result.assigned_team}</span></p>
+                        <p><span class="label">Reference ID:</span> <span>${result.dispute_id}</span></p>
+                    `;
+                } else {
+                    throw new Error(result.error || 'Failed to submit dispute');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        // Set default datetime to current
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+    </script>
+</body>
+</html> 
